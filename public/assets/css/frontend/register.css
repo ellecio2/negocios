@@ -1,0 +1,247 @@
+.form-input-edit {
+    height: 60px;
+    width: 100%;
+    border-radius: 10px;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    font-size: 1.4rem;
+    padding: 0 20px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+ul.social a {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50em;
+    line-height: 43px;
+    text-align: center;
+    font-size: 18px;
+    background-color: #d5d5df;
+}
+
+ul.social-md a {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50em;
+    line-height: 22px;
+    text-align: center;
+    font-size: 13px;
+    background-color: #d5d5df;
+}
+
+ul.social a:hover {
+    -webkit-transform: translateY(-3px);
+    transform: translateY(-3px);
+}
+
+ul.social i {
+    color: #171727;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+ul.social a:hover i {
+    color: #fff;
+}
+
+ul.social.colored i {
+    color: #fff;
+}
+
+ul.social [class*="facebook"]:hover,
+ul.social.colored [class*="facebook"] {
+    background-color: #3b5998;
+}
+
+ul.social [class*="twitter"]:hover,
+ul.social.colored [class*="twitter"] {
+    background-color: #1da1f2;
+}
+
+ul.social [class*="google"]:hover,
+ul.social.colored [class*="google"] {
+    background-color: #e62833;
+}
+
+ul.social.colored [class*="apple"] {
+    background-color: #141414;
+}
+
+ul.social [class*="youtube"]:hover,
+ul.social.colored [class*="youtube"] {
+    background-color: #ff0000;
+}
+
+ul.social [class*="instagram"]:hover,
+ul.social.colored [class*="instagram"] {
+    background-color: #bd32a2;
+}
+
+ul.social [class*="tripadvisor"]:hover,
+ul.social.colored [class*="tripadvisor"] {
+    background-color: #32da9d;
+}
+
+ul.social [class*="linkedin"]:hover,
+ul.social.colored [class*="linkedin"] {
+    background-color: #0070ac;
+}
+
+ul.colored-light [class*="facebook"] {
+    background-color: #c2d9fd;
+}
+
+ul.colored-light [class*="twitter"] {
+    background-color: #ace5f3;
+}
+
+ul.colored-light [class*="google"] {
+    background-color: #ffcbcc;
+}
+
+ul.colored-light [class*="youtube"] {
+    background-color: #ffcbcc;
+}
+
+ul.colored-light [class*="instagram"] {
+    background-color: #f7e2f3;
+}
+
+ul.colored-light [class*="facebook"]:hover {
+    background-color: #3b5998;
+}
+
+ul.colored-light [class*="twitter"]:hover {
+    background-color: #1da1f2;
+}
+
+ul.colored-light [class*="google"]:hover {
+    background-color: #ff0000;
+}
+
+ul.colored-light [class*="youtube"]:hover {
+    background-color: #ff0000;
+}
+
+ul.colored-light [class*="instagram"]:hover {
+    background-color: #bd32a2;
+}
+
+ul.colored-light [class*="facebook"] i {
+    color: #3b5998;
+}
+
+ul.colored-light [class*="twitter"] i {
+    color: #1da1f2;
+}
+
+ul.colored-light [class*="google"] i {
+    color: #ff0000;
+}
+
+ul.colored-light [class*="youtube"] i {
+    color: #ff0000;
+}
+
+ul.colored-light [class*="instagram"] i {
+    color: #bd32a2;
+}
+
+ul.colored-light a:hover i {
+    color: #ffffff;
+}
+
+#map_canvas {
+    height: 350px;
+    width: 100%;
+    margin-top: 2%;
+
+}
+
+@media all and (max-width: 991px) {
+    #map_canvas {
+        height: 354px !important;
+        width: 100% !important;
+        /* margin-top: 0.8em !important; */
+        position: relative !important;
+        overflow: hidden !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #identification_type_label {
+        text-align: left!important;
+    }
+   .form-check-inline {
+        margin-left: 0!important;
+    }
+}
+
+.valid {
+    border: 1px solid rgb(25, 135, 84);
+    box-shadow: rgb(25, 135, 84) 0px 0px 5px;
+}
+
+.is-invalid {
+    border: 1px solid rgb(220, 53, 69);
+    box-shadow: rgb(220, 53, 69) 0px 0px 5px;
+}
+
+.colored{
+    color:rgb(220, 53, 69);
+    font-weight: bold;
+}
+
+/* Para cambiar el borde cuando el archivo es requerido */
+/*input[required] {
+    border: 2px solid #ffc107; !* Borde amarillo para indicar que el campo es requerido *!
+}*/
+
+/* Cuando el campo de archivo tiene un archivo válido */
+input.valid {
+    border-color: #28a745; /* Verde para indicar que se ha seleccionado un archivo */
+}
+
+/* Estilo del botón cuando está activo (con archivo) */
+button.active {
+    background-color: #28a745; /* Verde para indicar que está activo */
+    color: white;
+    border: none;
+}
+
+button[disabled] {
+    background-color: #6c757d; /* Grises cuando está deshabilitado */
+    color: white;
+}
+
+.flash-message {
+    position: fixed;
+    top: 80%;
+    left: 86%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding-right: 40px; /* Deja espacio para el botón de cierre */
+}
+
+.flash-message .close {
+    position: absolute;
+    top: 1px;
+    right: 10px;
+    color: #000;
+    font-size: 20px;
+    opacity: 0.5;
+}
+
+.flash-message .close:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.success{
+    border: 1px solid rgb(25, 135, 84); box-shadow: rgb(25, 135, 84) 0px 0px 5px;
+}

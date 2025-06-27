@@ -1,0 +1,1 @@
+<?phpnamespace App\Models;use Illuminate\Database\Eloquent\Model;class ProductTax extends Model {    protected $fillable = [        'product_id',        'tax_id',        'tax',        'tax_type'    ];    protected $attributes = [        'tax_id' => 3,        'tax' => 18,        'tax_type' => 'percent'    ];}

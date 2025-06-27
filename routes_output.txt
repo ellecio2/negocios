@@ -1,0 +1,23 @@
+
+   ParseError 
+
+  syntax error, unexpected token "="
+
+  at app/Http/Controllers/Backend/ShippingManagementController.php:1606
+    1602▕         if (method_exists('\App\Http\Controllers\Delivery\PedidosYaController', 'getEstimateForOrder')) {
+    1603▕             $originalMethod = \App\Http\Controllers\Delivery\PedidosYaController::class . '::getEstimateForOrder';
+    1604▕ 
+    1605▕             // Crear un nuevo método getEstimateForOrder que no acceda a height/width/length
+  ➜ 1606▕             \App\Http\Controllers\Delivery\PedidosYaController::getEstimateForOrder = function ($order) {
+    1607▕                 // Obtener el primer detalle de la orden para el envío
+    1608▕                 $orderDetail = $order->orderDetails->first();
+    1609▕                 if (!$orderDetail || !$orderDetail->product) {
+    1610▕                     return ['error' => 'No hay productos en la orden'];
+
+      [2m+1 vendor frames [22m
+  2   [internal]:0
+      Composer\Autoload\ClassLoader::loadClass()
+
+      [2m+6 vendor frames [22m
+  9   [internal]:0
+      Illuminate\Foundation\Console\RouteListCommand::{closure:Illuminate\Foundation\Console\RouteListCommand::getRoutes():124}()

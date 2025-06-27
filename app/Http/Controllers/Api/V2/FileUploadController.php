@@ -1,0 +1,224 @@
+<?php
+
+namespace App\Http\Controllers\Api\V2;
+
+use App\Http\Controllers\Controller;
+use App\Models\Upload;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Storage;
+
+class FileUploadController extends Controller {
+    //
+    public function image_upload(Request $request) {
+        $user = User::find(auth()->user()->id);
+        if (!$user) {
+            return response()->json([
+                'result' => false,
+                'message' => translate("User not found."),
+                'path' => ""
+            ]);
+        }
+        $type = array(
+            "jpg" => "image",
+            "jpeg" => "image",
+            "png" => "image",
+            "svg" => "image",
+            "webp" => "image",
+            "gif" => "image",
+        );
+        try {
+            $image = $request->image;
+            $request->filename;
+            $realImage = base64_decode($image);
+            $dir = public_path('uploads/all');
+            $full_path = "$dir/$request->filename";
+            $file_put = file_put_contents($full_path, $realImage); // int or false
+            if ($file_put == false) {
+                return response()->json([
+                    'result' => false,
+                    'message' => "File uploading error",
+                    'path' => ""
+                ]);
+            }
+            $upload = new Upload;
+            $extension = strtolower(File::extension($full_path));
+            $size = File::size($full_path);
+            if (!isset($type[$extension])) {
+                unlink($full_path);
+                return response()->json([
+                    'result' => false,
+                    'message' => "Only image can be uploaded",
+                    'path' => ""
+                ]);
+            }
+            $upload->file_original_name = null;
+            $arr = explode('.', File::name($full_path));
+            for ($i = 0; $i < count($arr) - 1; $i++) {
+                if ($i == 0) {
+                    $upload->file_original_name .= $arr[$i];
+                } else {
+                    $upload->file_original_name .= "." . $arr[$i];
+                }
+            }
+            //unlink and upload again with new name
+            unlink($full_path);
+            $newFileName = rand(10000000000, 9999999999) . date("YmdHis") . "." . $extension;
+            $newFullPath = "$dir/$newFileName";
+            $file_put = file_put_contents($newFullPath, $realImage);
+            if ($file_put == false) {
+                return response()->json([
+                    'result' => false,
+                    'message' => "Uploading error",
+                    'path' => ""
+                ]);
+            }
+            $newPath = "uploads/all/$newFileName";
+            if (env('FILESYSTEM_DRIVER') == 's3') {
+                Storage::disk('s3')->put($newPath, file_get_contents(base_path('public/') . $newPath));
+                unlink(base_path('public/') . $newPath);
+            }
+            $upload->extension = $extension;
+            $upload->file_name = $newPath;
+            $upload->user_id = $user->id;
+            $upload->type = $type[$upload->extension];
+            $upload->file_size = $size;
+            $upload->save();
+            $user->avatar_original = $upload->id;
+            $user->save();
+            return response()->json([
+                'result' => true,
+                'message' => translate("Image updated"),
+                'path' => uploaded_asset($upload->id)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'result' => false,
+                'message' => $e->getMessage(),
+                'path' => ""
+            ]);
+        }
+    }
+
+
+public static function uploadStaticImage(string $filePath, User $user): int|null
+{
+    // Check if the file exists
+    if (!File::exists($filePath)) {
+        Log::error("Static file not found: $filePath");
+        return null;
+    }
+
+    // Get file info
+    $extension = strtolower(File::extension($filePath));
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg', 'webp', 'gif'];
+
+    if (!in_array($extension, $allowedExtensions)) {
+        Log::error("Invalid file extension for static upload: $extension");
+        return null;
+    }
+
+    $fileSize = File::size($filePath);
+    $originalName = File::name($filePath) . '.' . $extension;
+
+    // Create destination directory
+    $dir = public_path('uploads/all');
+    if (!File::exists($dir)) {
+        File::makeDirectory($dir, 0755, true);
+    }
+
+    // Generate unique filename
+    $fileName = uniqid() . '.' . $extension;
+    $destinationPath = $dir . '/' . $fileName;
+
+    // Copy the file to uploads directory
+    if (!File::copy($filePath, $destinationPath)) {
+        Log::error("Failed to copy static file from $filePath to $destinationPath");
+        return null;
+    }
+
+    // Handle S3 upload if configured
+    $uploadPath = "uploads/all/$fileName";
+    if (env('FILESYSTEM_DRIVER') == 's3') {
+        try {
+            Storage::disk('s3')->put($uploadPath, file_get_contents($destinationPath));
+            unlink($destinationPath);
+        } catch (\Exception $e) {
+            Log::error("S3 upload failed: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    // Create Upload record
+    $upload = new Upload;
+    $upload->file_original_name = $originalName;
+    $upload->file_name = $uploadPath;
+    $upload->extension = $extension;
+    $upload->user_id = $user->id;
+    $upload->type = 'image';
+    $upload->file_size = $fileSize;
+    $upload->save();
+
+    return $upload->id;
+}
+
+    public static function uploadImage(Request $request, string $filename, User $user) : int | null {
+
+        if (!$request->hasFile($filename) || !$request->file($filename)->isValid()) {
+            return null;
+        }
+
+        $image = $request->file($filename);
+
+        $extension = strtolower($image->getClientOriginalExtension());
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg', 'webp', 'gif'];
+
+        if (!in_array($extension, $allowedExtensions)) {
+            Log::error("No se subio una imagen al realizar el registro, el archivo recibido es: $extension");
+            return null;
+        }
+
+        $fileSize = $image->getSize();
+
+        $dir = public_path('uploads/all');
+        $fileName = uniqid() . '.' . $extension;
+        $image->move($dir, $fileName);
+
+        $upload = new Upload;
+        $upload->file_original_name = $image->getClientOriginalName();
+        $upload->file_name = "uploads/all/$fileName";
+        $upload->extension = $extension;
+        $upload->user_id = $user->id;
+        $upload->type = 'image';
+        $upload->file_size = $fileSize;
+        $upload->save();
+
+        $user->save();
+
+        return $upload->id;
+    }
+
+    public static function deleteImage(int $uploadId) {
+        $upload = Upload::find($uploadId);
+
+        if (!$upload) {
+            Log::error("Archivo no encontrado o no pertenece al usuario: $uploadId");
+            return false;
+        }
+
+        $filePath = public_path($upload->file_name);
+
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+        } else {
+            Log::error("El archivo físico no existe en la ruta: $filePath");
+        }
+
+        $upload->forceDelete();
+
+        return true;
+    }
+}

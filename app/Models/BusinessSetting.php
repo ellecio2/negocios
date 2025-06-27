@@ -1,0 +1,1 @@
+<?phpnamespace App\Models;use Illuminate\Database\Eloquent\Model;/** * @property string $type * @property string $value * @property string $lang */class BusinessSetting extends Model {    protected $fillable = [        'type',        'value',        'lang'    ];}

